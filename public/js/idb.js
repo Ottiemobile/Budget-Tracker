@@ -63,10 +63,15 @@ function uploadBudget() {
                 .then(() => {
                     const transaction = db.transaction(['new_budget'], 'readwrite');
 
-                    const store = transaction.objectStore("new_budget")
+                    const store = transaction.objectStore("new_budget");
 
                     // clear all items in the store
                     store.clear();
+
+                    alert('Budget transaction data has been fully submitted!');
+                })
+                .catch(err => {
+                    console.log(err);
                 });
         }
     };
