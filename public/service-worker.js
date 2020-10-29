@@ -1,11 +1,12 @@
 const APP_PREFIX = "BudgetTracker";
 const VERSION = "ver_1.0.0"
 const CACHE_NAME = APP_PREFIX + VERSION;
+const DATA_CACHE_NAME = CACHE_NAME + "-data";
 
 const FILES_TO_CACHE = [
     "/",
     "/index.html",
-    "/js/idb.js",
+    "/js/db.js",
     "/js/index.js",
     "/icons/icon-192x192.png",
     "/icons/icon-72x72.png",
@@ -49,18 +50,32 @@ self.addEventListener('activate', function(e) {
     );
 });
 
-self.addEventListener('fetch', function(e) {
+// self.addEventListener('fetch', function(e) {
+//     console.log('fetch request: ' + e.request.url)
+//     e.respondWith(
+//         caches.match(CACHE_NAME).then(function (request) {
+//             if(request) {
+//                 console.log('responding with cache: ' + e.request.url);
+//                 return request;
+//             } else {
+//                 console.log('file is not cached, fetching: ' + e.request.url);
+//                 return fetch(e.request);
+//             }
+//         })
+//     )
+// })
+
+self.addEventListener('fetch', function (e) {
     console.log('fetch request: ' + e.request.url)
     e.respondWith(
-        caches.match(DATA_CACHE_NAME).then(function (request) {
+        caches.match(e.request).then(function (request) {
             if(request) {
-                console.log('responding with cache: ' + e.request.url)
+                console.log('responding with cache: ' + e.request.url);
                 return request;
             } else {
-                console.log('file is not cached, fetching: ' + e.request.url)
-                return fetch(e.request);
+            console.log('file is not cached, fetching: ' + e.request.url);
+            return fetch(e.request);
             }
         })
     )
 })
-
