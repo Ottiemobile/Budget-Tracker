@@ -52,13 +52,13 @@ self.addEventListener('activate', function(e) {
 self.addEventListener('fetch', function(e) {
     console.log('fetch request: ' + e.request.url)
     e.respondWith(
-        caches.match(e.request).then(function (request) {
+        caches.match(DATA_CACHE_NAME).then(function (request) {
             if(request) {
                 console.log('responding with cache: ' + e.request.url)
-                return request
+                return request;
             } else {
                 console.log('file is not cached, fetching: ' + e.request.url)
-                return fetch(e.request)
+                return fetch(e.request);
             }
         })
     )
