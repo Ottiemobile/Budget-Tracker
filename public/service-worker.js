@@ -4,19 +4,19 @@ const CACHE_NAME = APP_PREFIX + VERSION;
 const DATA_CACHE_NAME = CACHE_NAME + "-data";
 
 const FILES_TO_CACHE = [
-    "/",
-    "/index.html",
-    "/js/db.js",
-    "/js/index.js",
-    "/icons/icon-192x192.png",
-    "/icons/icon-72x72.png",
-    "/icons/icon-96x96.png",
-    "/icons/icon-128x128.png",
-    "/icons/icon-144x144.png",
-    "/icons/icon-384x384.png",
-    "/icons/icon-512x512.png",
+    "./",
+    "./index.html",
+    "./js/db.js",
+    "./js/index.js",
+    "./icons/icon-192x192.png",
+    "./icons/icon-72x72.png",
+    "./icons/icon-96x96.png",
+    "./icons/icon-128x128.png",
+    "./icons/icon-144x144.png",
+    "./icons/icon-384x384.png",
+    "./icons/icon-512x512.png",
     "https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css",
-    "/css/styles.css"
+    "./css/styles.css"
 
 ];
 
@@ -65,17 +65,25 @@ self.addEventListener('activate', function(e) {
 //     )
 // })
 
-self.addEventListener('fetch', function (e) {
-    console.log('fetch request: ' + e.request.url)
-    e.respondWith(
-        caches.match(e.request).then(function (request) {
-            if(request) {
-                console.log('responding with cache: ' + e.request.url);
-                return request;
-            } else {
-            console.log('file is not cached, fetching: ' + e.request.url);
-            return fetch(e.request);
-            }
-        })
-    )
+self.addEventListener("fetch", function(event) {
+    if(event.request.url.includes("/api/")) {
+        event.respondWith(
+            caches.open(DATA_CACHE_NAME).then(cache => {
+                return fetch(event.request)
+                    .then(response => {
+                        if(response.status === 200) {
+                            cache.put(event.request.url, response.clone());
+                        }
+
+                        return response;
+                    })
+                    .catch(err => {
+                        return cache.match(event.request);
+                    });
+
+            }).catch(err => console.log(err))
+        );
+
+        return;
+    }
 })
